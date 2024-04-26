@@ -1,16 +1,28 @@
 {
   "files": {
-    "main.css": "/Corals/static/css/main.f855e6bc.css",
-    "main.js": "/Corals/static/js/main.43d784f7.js",
-    "static/js/453.d354954e.chunk.js": "/Corals/static/js/453.d354954e.chunk.js",
-    "static/media/logo.svg": "/Corals/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/Corals/index.html",
-    "main.f855e6bc.css.map": "/Corals/static/css/main.f855e6bc.css.map",
-    "main.43d784f7.js.map": "/Corals/static/js/main.43d784f7.js.map",
-    "453.d354954e.chunk.js.map": "/Corals/static/js/453.d354954e.chunk.js.map"
+    "main.css": "/static/css/main.a8b20450.css",
+    "main.js": "/static/js/main.98b58d66.js",
+    "static/js/453.d354954e.chunk.js": "/static/js/453.d354954e.chunk.js",
+    "static/media/RasmusAndersson-Inter-Regular.ttf": "/static/media/RasmusAndersson-Inter-Regular.8427860ac8bc5bb4b008.ttf",
+    "static/media/NPSCoral.jpeg": "/static/media/NPSCoral.85c767d15e47469ea7bf.jpeg",
+    "static/media/RasmusAndersson-Inter-Bold.otf": "/static/media/RasmusAndersson-Inter-Bold.4852edfcf88cee219c54.otf",
+    "static/media/RasmusAndersson-Inter-Medium.otf": "/static/media/RasmusAndersson-Inter-Medium.ddf01184de7cd1ba5380.otf",
+    "static/media/Scoly.jpeg": "/static/media/Scoly.7237e4305c8379c8e07f.jpeg",
+    "static/media/Favia.jpeg": "/static/media/Favia.4470ae39a34b090d2da0.jpeg",
+    "static/media/Zoas.jpeg": "/static/media/Zoas.415a47a7e6f21b8d7d6b.jpeg",
+    "static/media/Monti.jpeg": "/static/media/Monti.7943b8ffa3274378ff18.jpeg",
+    "static/media/Acro.jpeg": "/static/media/Acro.7054993ccc5d2790d3da.jpeg",
+    "static/media/Mushroom.jpeg": "/static/media/Mushroom.fda2cda8e89f635b7be6.jpeg",
+    "static/media/Chalice.jpeg": "/static/media/Chalice.8b05914ccd8b1fec61f9.jpeg",
+    "static/media/FishTank.jpeg": "/static/media/FishTank.9e2b8e86a8cd3de02d5f.jpeg",
+    "static/media/AquascapeIdeas.jpeg": "/static/media/AquascapeIdeas.520135cd8854386dd9b2.jpeg",
+    "index.html": "/index.html",
+    "main.a8b20450.css.map": "/static/css/main.a8b20450.css.map",
+    "main.98b58d66.js.map": "/static/js/main.98b58d66.js.map",
+    "453.d354954e.chunk.js.map": "/static/js/453.d354954e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f855e6bc.css",
-    "static/js/main.43d784f7.js"
+    "static/css/main.a8b20450.css",
+    "static/js/main.98b58d66.js"
   ]
 }
