@@ -1,0 +1,396 @@
+:root {
+    --clr-primary-500: #5EEAD4;
+    --clr-primary-400: hsl(9, 100%, 64%);
+    --clr-primary-300: hsl(177, 48%, 44%);
+    --clr-neutral-900: #213462;
+    --clr-neutral-200: #E2E8F0;
+    --clr-neutral-100: hsl(215, 20%, 65%);
+  
+    --ff-med: 'Inter-Medium',sans-serif;
+  
+    --fs-xl: 3rem;
+    --fs-700: 2.5rem;
+    --fs-600: 2.25rem;
+    --fs-550: 1.875rem;
+    --fs-500: 1.25rem;
+    --fs-450: 1.15rem;
+    --fs-400: 1rem;
+    --fs-350: 0.875rem;
+    --fs-300: 0.75rem;
+    --fs-200: 0.625rem;
+  }
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    /* background-color: --clr-neutral-900; */
+}
+
+
+/* Header Styles */
+.header {
+    background-color: hsla(236, 73%, 20%, 0.35);
+    color: var(--clr-neutral-200);
+    padding: 2rem;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+    height: 3rem;
+}
+.header button{
+    margin: .5rem;
+    background-color: var(--clr-neutral-900);
+    color: var(--clr-neutral-200);
+    border-radius: 7px;
+    border: 1px solid var(--clr-neutral-100);
+}
+
+.header-login {
+    color: var(--clr-neutral-100);
+}
+
+/* Navigation and Dark Mode Toggle */
+.nav-links {
+    list-style: none;
+}
+
+.nav-links li {
+    display: inline;
+    margin-right: .25rem;
+}
+
+/* Homepage Styles */
+.coral-main-page {
+    flex: 1;
+    padding: --fs-500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 720px;
+    margin-bottom: 10rem;
+    justify-content: center;
+}
+
+.coral-homepage-images-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: --fs-200;
+    
+}
+
+.coral-homepage-image-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    padding: .25rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.coral-homepage-image-container img {
+    width: 130px;
+    height: 100px;
+    display: block;
+    border-radius: .5rem;
+    box-shadow: 0 0 10px var(--clr-primary-500);
+}
+
+.coral-home-img-label {
+    background-color: #14fdee67;
+    border-radius: 7px;
+    color:var(--clr-neutral-200);
+    font-size: var(--fs-200);
+    width: 100%;
+    border-radius: --fs-200;
+    text-align: center;
+    margin-top: .25rem;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: hsla(236, 73%, 20%, 0.35);
+    color: #333;
+    padding: --fs-200 --fs-500;
+    text-align: center;
+    width: 100%;
+    height: 3rem;
+}
+
+.footer-login {
+    background-color: hsla(236, 73%, 20%, 0.35);
+    color: #333;
+    width: 100%;
+    height: 3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+    .header, .footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-links li {
+        display: block;
+        margin: --fs-200 0;
+    }
+
+    .images-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    .page-images-list {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    }
+}
+
+
+@media (max-width: 480px) {
+    .page-images-list {
+        grid-template-columns: 1fr; /* 1 column on very small screens */
+    }
+}
+.coral-main-page-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+/* scroll box images styling*/
+.coral-imagescroll-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+  
+  .box-scroll-images {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: var(--clr-primary-500) var(--clr-neutral-200);
+    border: 1px solid var(--clr-neutral-100);
+    padding: 10px 0;
+    width: 720px;
+    border-radius: 7px;
+    margin: 1rem;
+  }
+  
+  .box-scroll-images::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .box-scroll-images::-webkit-scrollbar-track {
+    background: var(--clr-neutral-200);
+  }
+  
+  .box-scroll-images::-webkit-scrollbar-thumb {
+    background-color: var(--clr-primary-500);
+    border-radius: 10px;
+    border: 2px solid var(--clr-neutral-200);
+  }
+  
+  .scroll-image-container {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--clr-primary-500);
+  }
+  
+  .scroll-image-container img {
+    width: 150px;
+    height: auto;
+    vertical-align: middle;
+  }
+  
+  .heart-icon {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  
+  .heart-icon:hover, .heart-icon.favorited {
+    opacity: 1;
+    color: var(--clr-primary-400);
+  }
+  
+  
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #000;
+  }
+  
+ 
+  .heart-icon-modal {
+    position: absolute;
+    top: --fs-200;
+    right: 3.75rem;
+    color: white;
+    font-size: --fs-550;
+    cursor: pointer;
+  }
+  
+  .heart-icon-modal.favorited {
+    color: red;
+  }
+  .modal-box{
+    width: 500px;
+    height: 400px;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5); /* Check opacity */
+    display: flex; /* Ensure it's not 'none' */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+    border-radius: 12px;
+    margin-top: 13rem;
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center; /* Center items horizontally */
+    width: 500px; /* Fixed width */
+    height: 400px; /* Fixed height */
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 0; /* No padding */
+    margin: 0; /* No margin */
+}
+.modal-img {
+    width: 100%;
+    align-self: center; /* Ensures the image is centered horizontally within the modal */
+    margin-top: 0; /* Adjust or remove as necessary */
+}
+.modal-button {
+    border-radius: 7px;
+    background-color: #213462;
+    color: var(--clr-neutral-200);
+    width: 50%;
+    align-self: center;
+    margin-top: .5rem; /* Ensures there is some space between the image and the button */
+}
+.page-images-list{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(100px, 1fr)); 
+    width: 46rem;
+    gap: 1rem; 
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    margin:1rem;
+}
+.page-img-grid {
+    margin-top: 1rem;
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    display: block;
+    border-radius: .5rem;
+    box-shadow: 0 0 10px var(--clr-primary-500);
+}
+.page-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-aligns the content of the container */
+    gap: 1rem;
+}
+.page-inputbox{
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    width: 95%;
+}
+.page-btn{
+    margin-top: auto;
+    justify-self: baseline;
+    border-radius: 7px;
+    background-color:#b8c6edd6;
+    color: var(--clr-neutral-900);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+.file-box{
+    margin-top: .5rem;
+    border-radius: .5rem;
+    align-self: center;
+}
+.page-inputbox button{
+    
+    margin-top: .5rem;
+    border-radius: 7px;
+    background-color:#b8c6edd6;
+    color: var(--clr-neutral-900);
+    font-weight: 500;
+    width: 150px;
+    margin-bottom: .5rem;
+}
+.description-input{
+    width: 100%;  
+    padding: 10px;
+    border-radius: 4px;
+    box-sizing: border-box;  
+    resize: vertical;  
+    overflow: auto;  
+}
+.page-input-boxes{
+    display: flex;
+    flex-direction: column;
+    word-wrap: wrap;
+    width: 100%;
+    gap: .25rem;
+}
+.page-input-box2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    gap:6rem;
+    margin-top: auto;
+}
+
+/* Styling for text areas within .page-input-boxes */
+.page-input-boxes textarea {
+    width: 100%; /* Ensure textarea takes full width of the container */
+    padding: 8px;
+    border-radius: 4px;
+    resize: vertical; /* Allows vertical resizing only */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    overflow: auto; /* Adds a scrollbar if text exceeds the space */
+}
+
+/* Styling for input[type="text"] within .page-input-boxes for consistency */
+.page-input-boxes input[type="text"] {
+    width: 100%; /* Ensure input takes full width of the container */
+    padding: 8px;
+    border-radius: 4px;
+    box-sizing: border-box; /* Includes padding and border in width and height calculation */
+}
+.page-main-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

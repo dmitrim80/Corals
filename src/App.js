@@ -1,24 +1,23 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import CoralMain from './Corals/CoralMain';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './Corals/corals_page.css'
 
 function App() {
   return (
+  
+    <BrowserRouter>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Reactk
-        </a>
-      </header>
+    <Routes> 
+        <Route path="/corals/*" element={<CoralMain />} />
+    </Routes>
     </div>
+    
+    </BrowserRouter>
+
+    
+    
   );
 }
 
