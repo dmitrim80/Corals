@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/dmitrim80/Corals/static/css/main.f855e6bc.css",
-    "main.js": "/dmitrim80/Corals/static/js/main.53cd697e.js",
-    "static/js/453.d354954e.chunk.js": "/dmitrim80/Corals/static/js/453.d354954e.chunk.js",
-    "static/media/logo.svg": "/dmitrim80/Corals/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/dmitrim80/Corals/index.html",
-    "main.f855e6bc.css.map": "/dmitrim80/Corals/static/css/main.f855e6bc.css.map",
-    "main.53cd697e.js.map": "/dmitrim80/Corals/static/js/main.53cd697e.js.map",
-    "453.d354954e.chunk.js.map": "/dmitrim80/Corals/static/js/453.d354954e.chunk.js.map"
+    "main.css": "/Corals/static/css/main.f855e6bc.css",
+    "main.js": "/Corals/static/js/main.43d784f7.js",
+    "static/js/453.d354954e.chunk.js": "/Corals/static/js/453.d354954e.chunk.js",
+    "static/media/logo.svg": "/Corals/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/Corals/index.html",
+    "main.f855e6bc.css.map": "/Corals/static/css/main.f855e6bc.css.map",
+    "main.43d784f7.js.map": "/Corals/static/js/main.43d784f7.js.map",
+    "453.d354954e.chunk.js.map": "/Corals/static/js/453.d354954e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.53cd697e.js"
+    "static/js/main.43d784f7.js"
   ]
 }
