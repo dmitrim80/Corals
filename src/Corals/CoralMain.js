@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { auth } from "./CoralFirebase-config";
+import { auth } from "./Firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import CoralHeader from "./CoralHeader";
 import CoralFooter from "./CoralFooter";
@@ -42,6 +42,7 @@ const Coral_Main = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("Auth state changed: ", currentUser);
       setUser(currentUser);
       setLoading(false);
     });

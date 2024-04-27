@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "./CoralFirebase-config";
+import { auth } from "./Firebase-config";
 
 const CoralHeader = ({ user, onToggleDarkMode }) => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -35,7 +35,9 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
     <div className="header">
       {user ? (
         <>
-          <button className="page-btn-upload" onClick={handleLogout}>Logout</button>
+          <button className="page-btn-upload" onClick={handleLogout}>
+            Logout
+          </button>
           <span>{user.email}</span>
         </>
       ) : (
@@ -63,7 +65,12 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
           <button className="page-btn" onClick={handleLogin} disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
-          <button className="page-btn" onClick={() => navigate("/corals/signup")}>Sign Up</button>
+          <button
+            className="page-btn"
+            onClick={() => navigate("/corals/signup")}
+          >
+            Sign Up
+          </button>
         </>
       )}
       {error && <p style={{ color: "red" }}>{error}</p>}

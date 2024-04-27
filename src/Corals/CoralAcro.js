@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { storage, db, auth } from "./CoralFirebase-config";
+import { storage, db, auth } from "./Firebase-config";
 import {
   ref,
   uploadBytes,

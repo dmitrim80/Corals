@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db } from "./CoralFirebase-config";
+import { db } from "./Firebase-config";
 import {
   collection,
   getDocs,

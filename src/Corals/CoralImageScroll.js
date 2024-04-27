@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { storage } from "./CoralFirebase-config"; // Adjust this import according to your Firebase configuration file
+import { storage } from "./Firebase-config"; // Adjust this import according to your Firebase configuration file
 import { ref, list, getDownloadURL } from "firebase/storage";
 import "./corals_page.css";
 
@@ -74,7 +74,6 @@ const ImageScroll = () => {
             </div>
           </div>
         )}
-       
       </div>
     </>
   );

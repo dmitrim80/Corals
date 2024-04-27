@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { storage, auth } from "./CoralFirebase-config";
+import { storage, auth } from "./Firebase-config";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ const CoralHomepage = ({ darkMode }) => {
       label: "fishtank",
       route: "fishtank",
     },
-    { src: imagepath9, label:"nps", route: "nps" },
+    { src: imagepath9, label: "nps", route: "nps" },
     { src: imagepath10, label: "aquascape", route: "aquascape" },
   ];
   const pageClass = darkMode ? "coral-main-page dark-mode" : "coral-main-page";
@@ -93,7 +93,6 @@ const CoralHomepage = ({ darkMode }) => {
     });
   };
 
-  
   useEffect(() => {
     listAll(imageListRef).then((response) => {
       const fetchURLs = response.items.map((item) => {
