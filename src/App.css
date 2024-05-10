@@ -23,7 +23,8 @@
   box-sizing: border-box;
 }
 *::selection {
-  background-color:var(--clr-primary-300); 
+  background-color: hsla(236, 73%, 20%, 0.35);
+  /* background-color:var(--clr-primary-300);  */
   color: var(--clr-neutral-900)
 }
 

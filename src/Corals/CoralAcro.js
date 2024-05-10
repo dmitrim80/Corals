@@ -57,14 +57,25 @@ const Acro = () => {
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
         const imageData = docSnapshot.data();
-        console.log("Fetched data for image click:", imageData); // Debugging log
+        console.log("Fetched data for image click:", imageData);
+
         setSelectedImage(image.url);
         setSelectedDescription(imageData.description);
-        setSelectedImageCoralName(imageData.coralName);
+        setSelectedImageCoralName(imageData.aquascapeType);
+
+        let lastEditedDate = "";
+        if (
+          imageData.lastEdited &&
+          imageData.lastEdited.toDate instanceof Function
+        ) {
+          lastEditedDate = imageData.lastEdited.toDate().toLocaleString();
+        }
+
         setSelectedLastEdited({
           editedBy: imageData.lastEditedBy,
-          lastEdited: imageData.lastEdited.toDate().toLocaleString(),
+          lastEdited: lastEditedDate,
         });
+
         setCurrentImageId(image.id);
         setIsModalOpen(true);
       } else {
@@ -78,6 +89,7 @@ const Acro = () => {
   const handleDescriptionInput = (event) => {
     setImageDescription(event.target.value);
   };
+
   const handleCoralNameInput = (event) => {
     setImageCoralName(event.target.value);
   };
@@ -244,7 +256,6 @@ const Acro = () => {
       } catch (error) {
         console.error("Error refetching the updated document:", error);
       }
-
       setIsModalOpen(true);
       setModalEdit(false);
     } catch (error) {
@@ -256,7 +267,7 @@ const Acro = () => {
   const ImageModal = ({
     url,
     description,
-    imageCoralName,
+    imageAquascapeType,
     lastEdited,
     onClose,
     onEdit,
@@ -264,9 +275,9 @@ const Acro = () => {
     if (!url) return null;
 
     return (
-      <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-image-container">
+          <div className="modal-img">
             <img src={url} alt="Full Size" />
           </div>
           <table className="modal-info-table">
@@ -274,9 +285,9 @@ const Acro = () => {
               <tr>
                 <td className="coral-name-cell">
                   <div className="coral-name-label">
-                    <b>Coral Name:</b>
+                    <b>Acro Name:</b>
                   </div>
-                  <div className="coral-name-value">{imageCoralName}</div>
+                  <div className="coral-name-value">{imageAquascapeType}</div>
                 </td>
                 <td className="last-edited-cell">
                   Last Edited: {lastEdited.lastEdited}
@@ -284,8 +295,8 @@ const Acro = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button onClick={onEdit}>Edit</button>
-                  <button onClick={onClose}>Close</button>
+                  <button className="modal-button" onClick={onEdit}>Edit</button>
+                  <button className="modal-button" onClick={onClose}>Close</button>
                 </td>
               </tr>
               <tr>
@@ -331,9 +342,9 @@ const Acro = () => {
     };
 
     return (
-      <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-image-container">
+          <div className="modal-img">
             <img src={url} alt="Full Size" />
           </div>
           <table className="modal-info-table">
@@ -356,8 +367,8 @@ const Acro = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button onClick={handleSave}>Save</button>
-                  <button onClick={onClose}>Dismiss</button>
+                  <button className="modal-button" onClick={handleSave}>Save</button>
+                  <button className="modal-button" onClick={onClose}>Dismiss</button>
                 </td>
               </tr>
               <tr>
@@ -492,7 +503,28 @@ const Acro = () => {
 
   return (
     <div className="page-main-box">
-      <div className="page-inputbox">
+      {isModalOpen && (
+        <ImageModal
+          url={selectedImage}
+          description={selectedDescription}
+          imageCoralName={selectedImageCoralName}
+          lastEdited={selectedLastEdited}
+          onClose={() => setIsModalOpen(false)}
+          onEdit={handleEdit}
+          imageId={currentImageId}
+        />
+      )}
+      {isModalEdit && (
+        <ModalEdit
+          url={selectedImage}
+          description={selectedDescription}
+          imageCoralName={selectedImageCoralName}
+          lastEdited={selectedLastEdited}
+          onSaveEdit={onSaveEdit}
+          onClose={handleDismiss}
+        />
+      )}
+      {/* <div className="page-inputbox">
         <div className="page-input-boxes">
           <input
             type="text"
@@ -528,7 +560,7 @@ const Acro = () => {
             Upload
           </button>
         </div>
-      </div>
+      </div> */}
 
       <div className="page-images-list">
         {currentImages.map((image, index) => (
@@ -566,27 +598,7 @@ const Acro = () => {
         </button>
       </div>
 
-      {isModalOpen && (
-        <ImageModal
-          url={selectedImage}
-          description={selectedDescription}
-          imageCoralName={selectedImageCoralName}
-          lastEdited={selectedLastEdited}
-          onClose={() => setIsModalOpen(false)}
-          onEdit={handleEdit}
-          imageId={currentImageId}
-        />
-      )}
-      {isModalEdit && (
-        <ModalEdit
-          url={selectedImage}
-          description={selectedDescription}
-          imageCoralName={selectedImageCoralName}
-          lastEdited={selectedLastEdited}
-          onSaveEdit={onSaveEdit}
-          onClose={handleDismiss}
-        />
-      )}
+      
     </div>
   );
 };

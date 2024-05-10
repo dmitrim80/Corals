@@ -280,9 +280,9 @@ const FishTankFurn = () => {
     if (!url) return null;
 
     return (
-      <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-image-container">
+          <div className="modal-img">
             <img src={url} alt="Full Size" />
           </div>
           <table className="modal-info-table">
@@ -290,7 +290,7 @@ const FishTankFurn = () => {
               <tr>
                 <td className="coral-name-cell">
                   <div className="coral-name-label">
-                    <b>Aquascape Type:</b>
+                    <b>Placement Type:</b>
                   </div>
                   <div className="coral-name-value">{imageAquascapeType}</div>
                 </td>
@@ -300,8 +300,8 @@ const FishTankFurn = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button onClick={onEdit}>Edit</button>
-                  <button onClick={onClose}>Close</button>
+                  <button className="modal-button" onClick={onEdit}>Edit</button>
+                  <button className="modal-button" onClick={onClose}>Close</button>
                 </td>
               </tr>
               <tr>
@@ -348,9 +348,9 @@ const FishTankFurn = () => {
     };
 
     return (
-      <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-image-container">
+          <div className="modal-img">
             <img src={url} alt="Full Size" />
           </div>
           <table className="modal-info-table">
@@ -358,7 +358,7 @@ const FishTankFurn = () => {
               <tr>
                 <td className="coral-name-cell">
                   <p>
-                    <b>Aquascape Type:</b>
+                    <b>Placement Type:</b>
                   </p>
                   <input
                     type="text"
@@ -373,8 +373,8 @@ const FishTankFurn = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button onClick={handleSave}>Save</button>
-                  <button onClick={onClose}>Dismiss</button>
+                  <button className="modal-button" onClick={handleSave}>Save</button>
+                  <button className="modal-button" onClick={onClose}>Dismiss</button>
                 </td>
               </tr>
               <tr>
@@ -509,7 +509,28 @@ const FishTankFurn = () => {
 
   return (
     <div className="page-main-box">
-      <div className="page-inputbox">
+      {isModalOpen && (
+        <ImageModal
+          url={selectedImage}
+          description={selectedDescription}
+          imageAquascapeType={selectedImageAquascapeType}
+          lastEdited={selectedLastEdited}
+          onClose={() => setIsModalOpen(false)}
+          onEdit={handleEdit}
+          imageId={currentImageId}
+        />
+      )}
+      {isModalEdit && (
+        <ModalEdit
+          url={selectedImage}
+          description={selectedDescription}
+          imageAquascapeType={selectedImageAquascapeType}
+          lastEdited={selectedLastEdited}
+          onSaveEdit={onSaveEdit}
+          onClose={handleDismiss}
+        />
+      )}
+      {/* <div className="page-inputbox">
         <div className="page-input-boxes">
           <input
             type="text"
@@ -545,7 +566,7 @@ const FishTankFurn = () => {
             Upload
           </button>
         </div>
-      </div>
+      </div> */}
 
       <div className="page-images-list">
         {currentImages.map((image, index) => (
@@ -583,27 +604,7 @@ const FishTankFurn = () => {
         </button>
       </div>
 
-      {isModalOpen && (
-        <ImageModal
-          url={selectedImage}
-          description={selectedDescription}
-          imageAquascapeType={selectedImageAquascapeType}
-          lastEdited={selectedLastEdited}
-          onClose={() => setIsModalOpen(false)}
-          onEdit={handleEdit}
-          imageId={currentImageId}
-        />
-      )}
-      {isModalEdit && (
-        <ModalEdit
-          url={selectedImage}
-          description={selectedDescription}
-          imageAquascapeType={selectedImageAquascapeType}
-          lastEdited={selectedLastEdited}
-          onSaveEdit={onSaveEdit}
-          onClose={handleDismiss}
-        />
-      )}
+      
     </div>
   );
 };

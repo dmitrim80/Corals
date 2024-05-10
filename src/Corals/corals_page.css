@@ -3,6 +3,8 @@
     --clr-primary-400: hsl(9, 100%, 64%);
     --clr-primary-300: hsl(177, 48%, 44%);
     --clr-neutral-900: #213462;
+    --clr-primary-900: #0e1358;
+    --clr-primary-950: hsla(236, 73%, 20%, 0.55);
     --clr-neutral-200: #E2E8F0;
     --clr-neutral-100: hsl(215, 20%, 65%);
   
@@ -23,13 +25,13 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    /* background-color: --clr-neutral-900; */
+    background-color: var(--clr-primary-900);
 }
 
 
-/* Header Styles */
+
 .header {
-    background-color: hsla(236, 73%, 20%, 0.35);
+    background-color: --clr-primary-900;
     color: var(--clr-neutral-200);
     padding: 2rem;
     display: flex;
@@ -87,7 +89,7 @@ body {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    padding: .25rem;
+    padding: .43rem;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -105,7 +107,7 @@ body {
     background-color: #14fdee67;
     border-radius: 7px;
     color:var(--clr-neutral-200);
-    font-size: var(--fs-200);
+    font-size: var(--fs-400);
     width: 100%;
     border-radius: --fs-200;
     text-align: center;
@@ -114,7 +116,7 @@ body {
 
 /* Footer Styles */
 .footer {
-    background-color: hsla(236, 73%, 20%, 0.35);
+    background-color: --clr-primary-900;
     color: #333;
     padding: --fs-200 --fs-500;
     text-align: center;
@@ -173,14 +175,19 @@ body {
   .box-scroll-images {
     overflow-x: auto;
     white-space: nowrap;
+    /* scrollbar-width is supported by Firefox */
     scrollbar-width: thin;
+    /* For other browsers, use WebKit-specific properties */
+    /* Chrome, Safari, Edge, Opera */
+    -webkit-overflow-scrolling: touch;
+    /* Firefox */
     scrollbar-color: var(--clr-primary-500) var(--clr-neutral-200);
     border: 1px solid var(--clr-neutral-100);
     padding: 10px 0;
     width: 720px;
     border-radius: 7px;
     margin: 1rem;
-  }
+}
   
   .box-scroll-images::-webkit-scrollbar {
     height: 8px;
@@ -248,44 +255,94 @@ body {
   .heart-icon-modal.favorited {
     color: red;
   }
-  .modal-box{
-    width: 500px;
-    height: 400px;
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.5); /* Check opacity */
-    display: flex; /* Ensure it's not 'none' */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it's on top */
-    border-radius: 12px;
-    margin-top: 13rem;
+   /* Modal container */
+.modal-box {
+    position: fixed; /* Position the modal */
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex; /* Center the modal content vertically */
+    justify-content: center; /* Center the modal content horizontally */
+    align-items: center; /* Center the modal content vertically */
+  }
+  .modal-img {
+    border-radius: .75rem;
+    max-width: 90%; /* Limit the maximum width of the image container */
+    max-height: 80vh; /* Limit the maximum height of the image container to 90% of viewport height */
+    overflow: auto; /* Enable scrolling if the image exceeds the container size */
+    box-shadow: 0 0 5px var(--clr-neutral-200);
   }
   
+  /* Modal content */
   .modal-content {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Align items to the top */
-    align-items: center; /* Center items horizontally */
-    width: 500px; /* Fixed width */
-    height: 400px; /* Fixed height */
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 0; /* No padding */
-    margin: 0; /* No margin */
-}
-.modal-img {
-    width: 100%;
-    align-self: center; /* Ensures the image is centered horizontally within the modal */
-    margin-top: 0; /* Adjust or remove as necessary */
-}
-.modal-button {
-    border-radius: 7px;
-    background-color: #213462;
+    background-color: var(--clr-neutral-900); /* White background */
+    padding: 2rem; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    min-width: 500px;
+    min-height: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Box shadow */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Modal image */
+  .modal-img img {
+    min-width: 450px;
+    min-height: 450px;
+    max-width: 550px; 
+  }
+
+  /* Modal close button */
+  .modal-button {
+    margin-top: 10px; /* Margin from the top */
+    padding: 10px 20px; /* Padding */
+    background-color: var(--clr-primary-900); /* Button background color */
+    color: var(--clr-neutral-100); /* Button text color */
+    font-size: var(--fs-400);
+    border: none; /* Remove button border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+  }
+  
+  /* Modal close button hover effect */
+  .modal-button:hover {
+    background-color: var(--clr-primary-950); /* Darker background color on hover */
+  }
+  .modal-buttons-cell{
+    display: flex;
+    gap: .5rem;
+  }
+  .last-edited-cell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+  }
+  .coral-name-cell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+  }
+  .coral-name-label{
+    font-size: var(--fs-400);
     color: var(--clr-neutral-200);
-    width: 50%;
-    align-self: center;
-    margin-top: .5rem; /* Ensures there is some space between the image and the button */
+  }
+.coral-name-value{
+    font-size: var(--fs-400);
+    color: var(--clr-neutral-200);
 }
+.modal-info-table{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: 1rem;
+}
+
 .page-images-list{
     display: grid;
     grid-template-columns: repeat(4, minmax(100px, 1fr)); 
