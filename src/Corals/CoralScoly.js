@@ -393,39 +393,41 @@ const Scoly = () => {
     );
   };
 
-  const fetchImages = async () => {
-    try {
-      const scolymiaCollection = collection(db, "scolymia");
-      const descriptionDocs = await getDocs(scolymiaCollection);
 
-      let images = [];
-      for (const doc of descriptionDocs.docs) {
-        const data = doc.data();
-        let lastEditedBy =
-          data.lastEditedBy || auth.currentUser.displayName || "Unknown";
-
-        // Check if 'last edited by' field is missing and update the document
-        if (!data.lastEditedBy) {
-          await updateDoc(doc.ref, { lastEditedBy });
+      const fetchImages = async () => {
+        try {
+          const coralsCollection = collection(db, "scolymia");
+          const querySnapshot = await getDocs(query(coralsCollection).limit(imagesPerPage));
+    
+          let images = [];
+    
+          querySnapshot.forEach((doc) => {
+            
+            const data = doc.data();
+            
+            let lastEditedBy = data.lastEditedBy || (currentUser ? currentUser.email || "Unknown" : "Unknown");
+    
+            if (!data.lastEditedBy) {
+              updateDoc(doc.ref, { lastEditedBy });
+            }
+    
+            images.push({
+              id: doc.id,
+              ...data,
+              description: data.description || "",
+              lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
+              lastEditedBy, 
+            });
+          });
+    
+          // Sort images by last edited timestamp
+          images.sort((a, b) => b.lastEdited - a.lastEdited);
+    
+          setImageList(images);
+        } catch (error) {
+          console.error("Error fetching images:", error);
         }
-
-        images.push({
-          id: doc.id,
-          ...data,
-          description: data.description || "",
-          lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
-          lastEditedBy, // Use updated lastEditedBy
-        });
-      }
-
-      // Sort images by last edited timestamp
-      images.sort((a, b) => b.lastEdited - a.lastEdited);
-
-      setImageList(images);
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
-  };
+      };
 
   useEffect(() => {
     fetchImages();

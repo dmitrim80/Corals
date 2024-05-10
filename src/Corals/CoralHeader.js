@@ -42,7 +42,7 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
         </>
       ) : (
         <>
-          <label>
+          <label className="header-login-input">
             Email:
             <input
               type="email"
@@ -52,7 +52,8 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
               aria-label="Email"
             />
           </label>
-          <label>
+          
+          <label className="header-login-input">
             Password:
             <input
               type="password"
@@ -62,15 +63,18 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
               aria-label="Password"
             />
           </label>
-          <button className="page-btn" onClick={handleLogin} disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-          <button
-            className="page-btn"
-            onClick={() => navigate("/corals/signup")}
-          >
-            Sign Up
-          </button>
+          <div>
+            <button className="header-page-btn" onClick={handleLogin} disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+            <button
+              className="header-page-btn"
+              onClick={() => navigate("/corals/signup")}
+            >
+              Sign Up
+            </button>
+          </div>
+          
         </>
       )}
       {error && <p style={{ color: "red" }}>{error}</p>}

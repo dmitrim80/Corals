@@ -47,7 +47,27 @@ body {
     border-radius: 7px;
     border: 1px solid var(--clr-neutral-100);
 }
-
+.header-login-input{
+    display: flex;
+    justify-content: space-between;
+    margin: .5rem;
+    padding: 5px;
+    border-radius: 7px;
+    border: 1px solid var(--clr-neutral-100);
+    width: 16rem;
+}
+.header-login-input label{
+    color: var(--clr-neutral-200);
+    font-size: var(--fs-400);
+    margin-right: 2rem;
+}
+.header-login-input input{
+    font-size: var(--fs-400);
+    border: none;
+    width: 10rem;
+    border-radius: .25rem;
+    padding: .25rem;
+}
 .header-login {
     color: var(--clr-neutral-100);
 }
@@ -133,6 +153,9 @@ body {
 
 /* Responsive Design */
 @media (max-width: 767px) {
+  .header{
+    margin-bottom: 5rem;
+  }
     .header, .footer {
         flex-direction: column;
         text-align: center;
@@ -142,27 +165,26 @@ body {
         display: block;
         margin: --fs-200 0;
     }
-
     .images-list {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
     .page-images-list {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
 
 @media (max-width: 480px) {
     .page-images-list {
-        grid-template-columns: 1fr; /* 1 column on very small screens */
+        grid-template-columns: 1fr;    
     }
+    
 }
 .coral-main-page-container{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
 }
 /* scroll box images styling*/
 .coral-imagescroll-container {
@@ -254,6 +276,13 @@ body {
   
   .heart-icon-modal.favorited {
     color: red;
+  }
+  .coral-homepage-imagescroll-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    z-index: 1;
   }
    /* Modal container */
 .modal-box {
@@ -379,7 +408,7 @@ body {
     align-content: center;
     width: 95%;
 }
-.page-btn{
+.header-page-btn{
     margin-top: auto;
     justify-self: baseline;
     border-radius: 7px;
@@ -387,6 +416,7 @@ body {
     color: var(--clr-neutral-900);
     font-weight: 500;
     margin-bottom: 1rem;
+    width: 60px;
 }
 .file-box{
     margin-top: .5rem;

@@ -113,7 +113,7 @@ const Coral_Main = () => {
       <Routes>
         <Route path="index" element={<CoralHomepage />} />
         <Route path="homepage" element={<CoralHomepage />} />
-        {/* <Route path="homepage" element={user ? <CoralHomepage /> : <Navigate replace to="/corals/index" />} /> */}
+        <Route path="homepage" element={user ? <CoralHomepage /> : <Navigate replace to="/corals/index" />} />
         <Route
           path="acro"
           element={

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "./Firebase-config";
 import {
   collection,
@@ -17,14 +18,16 @@ const CoralSignup = () => {
   const [newUserPassword, setNewUserPassword] = useState("");
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
-
   const usersCollectionRef = collection(db, "users");
 
+  const navigate = useNavigate();
   const deleteUser = async (id) => {
     const userDoc = doc(db, "users", id);
     await deleteDoc(userDoc);
   };
-  console.log(auth.currentUser);
+
+
+
   const createUser = async () => {
     if (!newUserEmail || !newUserPassword) {
       setError("Email and password are required");
@@ -44,15 +47,12 @@ const CoralSignup = () => {
       .catch((error) => {
         setError(error.message);
       });
+      if(auth.currentUser){
+        console.log(auth.currentUser)
+        navigate("/corals/homepage");
+      }
   };
 
-  useEffect(() => {
-    const getUsers = async () => {
-      const data = await getDocs(usersCollectionRef);
-      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-    getUsers();
-  }, [usersCollectionRef]);
 
   return (
     <>
@@ -66,6 +66,7 @@ const CoralSignup = () => {
           placeholder="Last Name:"
           onChange={(event) => setNewLastName(event.target.value)}
         />
+        <br/>
         <input
           placeholder="Email:"
           onChange={(event) => setNewUserEmail(event.target.value)}
@@ -76,16 +77,7 @@ const CoralSignup = () => {
           onChange={(event) => setNewUserPassword(event.target.value)}
         />
         <button onClick={createUser}>Create User</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
       </div>
-      {users.map((user) => (
-        <div key={user.id}>
-          <h1>First Name: {user.firstName}</h1>
-          <h1>Last Name: {user.lastName}</h1>
-          <h1>Email: {user.email}</h1>
-          <button onClick={() => deleteUser(user.id)}>Delete User</button>
-        </div>
-      ))}
     </>
   );
 };

@@ -40,8 +40,7 @@ const CoralHomepage = ({ darkMode }) => {
   const navigate = useNavigate();
 
   const handleImageClick = (route) => {
-    console.log("Attempting to navigate to:", `/corals/${route}`);
-    navigate(`/corals/${route}`); // Adjust to navigate correctly
+    navigate(`/corals/${route}`); 
   };
 
   const [visibleImages, setVisibleImages] = useState([]);
@@ -52,7 +51,7 @@ const CoralHomepage = ({ darkMode }) => {
   }, []);
 
   const loadMoreImages = async () => {
-    const acroporaRef = ref(storage, "Acropora"); // Adjust the path as per your Firebase Storage structure
+    const acroporaRef = ref(storage, "Acropora"); 
     try {
       const result = await listAll(acroporaRef, {
         maxResults: 5,

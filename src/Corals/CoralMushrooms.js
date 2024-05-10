@@ -395,18 +395,19 @@ const Mushrooms = () => {
 
   const fetchImages = async () => {
     try {
-      const mushroomsCollection = collection(db, "mushrooms");
-      const descriptionDocs = await getDocs(mushroomsCollection);
+      const coralsCollection = collection(db, "mushrooms");
+      const querySnapshot = await getDocs(query(coralsCollection).limit(imagesPerPage));
 
       let images = [];
-      for (const doc of descriptionDocs.docs) {
-        const data = doc.data();
-        let lastEditedBy =
-          data.lastEditedBy || auth.currentUser.displayName || "Unknown";
 
-        // Check if 'last edited by' field is missing and update the document
+      querySnapshot.forEach((doc) => {
+        
+        const data = doc.data();
+        
+        let lastEditedBy = data.lastEditedBy || (currentUser ? currentUser.email || "Unknown" : "Unknown");
+
         if (!data.lastEditedBy) {
-          await updateDoc(doc.ref, { lastEditedBy });
+          updateDoc(doc.ref, { lastEditedBy });
         }
 
         images.push({
@@ -414,9 +415,9 @@ const Mushrooms = () => {
           ...data,
           description: data.description || "",
           lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
-          lastEditedBy, // Use updated lastEditedBy
+          lastEditedBy, 
         });
-      }
+      });
 
       // Sort images by last edited timestamp
       images.sort((a, b) => b.lastEdited - a.lastEdited);
