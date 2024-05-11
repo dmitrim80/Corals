@@ -53,12 +53,6 @@ const ImageScroll = () => {
               <img
                 src={imageUrl}
                 alt={`image_${index}`}
-                style={{
-                  width: "150px",
-                  height: "auto",
-                  display: "inline-block",
-                  marginRight: "10px",
-                }}
                 onClick={() => openModal(imageUrl)}
               />
             </div>

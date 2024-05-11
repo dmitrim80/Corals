@@ -23,6 +23,7 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
   };
 
   const handleLogout = async () => {
+    setLoading(false);
     try {
       await signOut(auth);
       navigate("/corals/index");
@@ -52,7 +53,7 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
               aria-label="Email"
             />
           </label>
-          
+
           <label className="header-login-input">
             Password:
             <input
@@ -64,17 +65,11 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
             />
           </label>
           <div>
-            <button className="header-page-btn" onClick={handleLogin} disabled={loading}>
+            <button onClick={handleLogin} disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>
-            <button
-              className="header-page-btn"
-              onClick={() => navigate("/corals/signup")}
-            >
-              Sign Up
-            </button>
+            <button onClick={() => navigate("/corals/signup")}>Sign Up</button>
           </div>
-          
         </>
       )}
       {error && <p style={{ color: "red" }}>{error}</p>}
