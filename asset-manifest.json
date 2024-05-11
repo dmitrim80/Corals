@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.5c65eb79.css",
+    "main.css": "/static/css/main.0efebb03.css",
     "main.js": "/static/js/main.8b63dee1.js",
     "static/js/453.d354954e.chunk.js": "/static/js/453.d354954e.chunk.js",
     "static/media/RasmusAndersson-Inter-Regular.ttf": "/static/media/RasmusAndersson-Inter-Regular.8427860ac8bc5bb4b008.ttf",
@@ -17,12 +17,12 @@
     "static/media/FishTank.jpeg": "/static/media/FishTank.9e2b8e86a8cd3de02d5f.jpeg",
     "static/media/AquascapeIdeas.jpeg": "/static/media/AquascapeIdeas.520135cd8854386dd9b2.jpeg",
     "index.html": "/index.html",
-    "main.5c65eb79.css.map": "/static/css/main.5c65eb79.css.map",
+    "main.0efebb03.css.map": "/static/css/main.0efebb03.css.map",
     "main.8b63dee1.js.map": "/static/js/main.8b63dee1.js.map",
     "453.d354954e.chunk.js.map": "/static/js/453.d354954e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5c65eb79.css",
+    "static/css/main.0efebb03.css",
     "static/js/main.8b63dee1.js"
   ]
 }
