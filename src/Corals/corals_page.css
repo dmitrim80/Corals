@@ -49,7 +49,7 @@ body {
     border-radius: .25rem;
     font-weight: bold;
     border: 1px solid var(--clr-neutral-100);
-    width: 4.2rem;
+    width: 4.3rem;
     font-size: var(--fs-300);
 }
 .header-login-input{
@@ -58,7 +58,7 @@ body {
     margin: .5rem;
     padding: 5px;
     border-radius: .5rem;
-    width: 15.8rem;
+    width: 15.7rem;
 }
 .header-login-input label{
     color: var(--clr-neutral-200);
