@@ -17,7 +17,14 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
       await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       navigate("/corals/homepage");
     } catch (error) {
-      setError("Login error: " + error.message);
+      if (
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        window.alert("Incorrect email or password. Please try again.");
+      } else {
+        setError("Login error: " + error.message);
+      }
       setLoading(false);
     }
   };
@@ -33,6 +40,7 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
   };
 
   return (
+    <>
     <div className="header">
       {user ? (
         <>
@@ -72,8 +80,11 @@ const CoralHeader = ({ user, onToggleDarkMode }) => {
           </div>
         </>
       )}
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
+
+    {error &&<> <p style={{ color: "red" }}>{error}</p></>}
+    </>
+    
   );
 };
 export default CoralHeader;

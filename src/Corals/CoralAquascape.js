@@ -13,13 +13,20 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  limit,
   query,
   where,
   getDoc,
+  orderBy,
+  startAfter,
 } from "firebase/firestore";
 import { v4 } from "uuid";
 
+// Utility function to add delay
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const Aquascape = () => {
+  const [totalCount, setTotalCount] = useState(0);
   const [imageUpload, setImageUpload] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,8 +34,7 @@ const Aquascape = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedLastEdited, setSelectedLastEdited] = useState(null);
-  const [selectedImageAquascapeType, setSelectedImageAquascapeType] =
-    useState("");
+  const [selectedImageAquascapeType, setSelectedImageAquascapeType] = useState("");
   const [descriptions, setDescriptions] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
   const [imageDescription, setImageDescription] = useState("");
@@ -36,17 +42,16 @@ const Aquascape = () => {
   const [fileInputValue, setFileInputValue] = useState("");
   const [currentImageId, setCurrentImageId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const imagesPerPage = 12; // 12 images per page
-  const indexOfLastImage = currentPage * imagesPerPage;
-  const indexOfFirstImage = indexOfLastImage - imagesPerPage;
-  const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
-  const totalImages = imageList.length;
-  const totalPages = Math.ceil(totalImages / imagesPerPage);
+  const [imagesPerPage, setImagesPerPage] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+  const [lastVisibleDocs, setLastVisibleDocs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleEdit = () => {
     setModalEdit(true); // Open ModalEdit
     setIsModalOpen(false); // Close ImageModal
   };
+
   const handleDismiss = () => {
     setModalEdit(false); // Close ModalEdit
     setIsModalOpen(true); // Reopen ImageModal
@@ -65,10 +70,7 @@ const Aquascape = () => {
         setSelectedImageAquascapeType(imageData.aquascapeType);
 
         let lastEditedDate = "";
-        if (
-          imageData.lastEdited &&
-          imageData.lastEdited.toDate instanceof Function
-        ) {
+        if (imageData.lastEdited && imageData.lastEdited.toDate instanceof Function) {
           lastEditedDate = imageData.lastEdited.toDate().toLocaleString();
         }
 
@@ -90,6 +92,7 @@ const Aquascape = () => {
   const handleDescriptionInput = (event) => {
     setImageDescription(event.target.value);
   };
+
   const handleAquascapeTypeInput = (event) => {
     setImageAquascapeType(event.target.value);
   };
@@ -105,14 +108,13 @@ const Aquascape = () => {
       const snapshot = await uploadBytes(imageRef, imageUpload);
       const url = await getDownloadURL(snapshot.ref);
 
-      // Initialize fields when creating a new document
       const newDocRef = await addDoc(collection(db, "aquascapes"), {
         url,
         imageName,
         description: imageDescription,
         aquascapeType: imageAquascapeType,
-        lastEdited: new Date(), // Use current date
-        lastEditedBy: userEmail, // Use current user or 'Unknown'
+        lastEdited: new Date(),
+        lastEditedBy: userEmail,
       });
 
       setImageList((prevList) => [
@@ -127,16 +129,12 @@ const Aquascape = () => {
         },
         ...prevList,
       ]);
-      // Reset the description input after upload
 
       setImageDescription("");
       setImageAquascapeType("");
       setFileInputValue(""); // Reset file input value
     } catch (error) {
-      console.error(
-        "Error uploading image or creating Firestore document:",
-        error
-      );
+      console.error("Error uploading image or creating Firestore document:", error);
     }
   };
 
@@ -147,15 +145,9 @@ const Aquascape = () => {
 
   const getDocumentIdFromImageName = async (imageName) => {
     try {
-      const q = query(
-        collection(db, "aquascapes"),
-        where("imageName", "==", imageName)
-      );
+      const q = query(collection(db, "aquascapes"), where("imageName", "==", imageName));
       const querySnapshot = await getDocs(q);
-      console.log(
-        `Documents found for image name '${imageName}':`,
-        querySnapshot.docs.length
-      );
+      console.log(`Documents found for image name '${imageName}':`, querySnapshot.docs.length);
       querySnapshot.forEach((doc) => console.log(doc.id, doc.data()));
 
       if (!querySnapshot.empty) {
@@ -172,14 +164,11 @@ const Aquascape = () => {
 
   const deleteImage = async (imageId, imageName, isOrphan) => {
     console.log("Attempting to delete image with Name:", imageName);
-    // Ensure the image name does not contain 'Aquascape Ideas/' prefix
     if (imageName.startsWith("Aquascape Ideas/")) {
       imageName = imageName.replace("Aquascape Ideas/", "");
     }
 
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this image?"
-    );
+    const isConfirmed = window.confirm("Are you sure you want to delete this image?");
     if (isConfirmed) {
       try {
         const imageRef = ref(storage, `Aquascape Ideas/${imageName}`);
@@ -190,9 +179,7 @@ const Aquascape = () => {
           await deleteDoc(docRef);
         }
 
-        setImageList(
-          imageList.filter((image) => image.imageName !== imageName)
-        );
+        setImageList(imageList.filter((image) => image.imageName !== imageName));
         alert("Image deleted successfully.");
       } catch (error) {
         console.error("Error deleting image:", error);
@@ -214,9 +201,7 @@ const Aquascape = () => {
     }
 
     try {
-      const userEmail = currentUser
-        ? currentUser.email || "Unknown"
-        : "Unknown";
+      const userEmail = currentUser ? currentUser.email || "Unknown" : "Unknown";
       const docRef = doc(db, "aquascapes", imageId);
       await updateDoc(docRef, {
         description: description,
@@ -227,7 +212,6 @@ const Aquascape = () => {
 
       alert("Changes saved successfully!");
 
-      // Update the image list state
       setImageList((prevList) =>
         prevList.map((image) => {
           if (image.id === imageId) {
@@ -242,6 +226,7 @@ const Aquascape = () => {
           return image;
         })
       );
+
       try {
         const docRef = doc(db, "aquascapes", imageId);
         const docSnapshot = await getDoc(docRef);
@@ -249,7 +234,6 @@ const Aquascape = () => {
           const imageData = docSnapshot.data();
           setSelectedDescription(imageData.description);
           setSelectedImageAquascapeType(imageData.aquascapeType);
-          // Update last edited info if needed
         } else {
           console.log("Document not found after update.");
         }
@@ -322,8 +306,7 @@ const Aquascape = () => {
     imageId,
   }) => {
     const [editableDescription, setEditableDescription] = useState(description);
-    const [editableAquascapeType, setEditableAquascapeType] =
-      useState(imageAquascapeType);
+    const [editableAquascapeType, setEditableAquascapeType] = useState(imageAquascapeType);
 
     useEffect(() => {
       setEditableDescription(description);
@@ -389,17 +372,57 @@ const Aquascape = () => {
     );
   };
 
-  const fetchImages = async () => {
+  const fetchTotalCount = async () => {
+    try {
+      const totalCountDoc = await getDoc(doc(db, 'collection_count', 'aquascapes'));
+      if (totalCountDoc.exists()) {
+        const totalCount = totalCountDoc.data().count;
+        console.log('Total count:', totalCount);
+        setTotalCount(totalCount);
+        setTotalPages(Math.ceil(totalCount / imagesPerPage)); // Calculate total pages
+        return totalCount;
+      } else {
+        console.log('Total count document does not exist.');
+        return 0; 
+      }
+    } catch (error) {
+      console.error('Error fetching total count:', error);
+      return 0; 
+    }
+  };
+
+  const fetchImages = async (pageNumber, imagesPerPage, lastVisible = null) => {
+    console.log("Current Page Number:", pageNumber);
+    console.log("Current imagesPerPage:", imagesPerPage);
+
     try {
       const coralsCollection = collection(db, "aquascapes");
-      const querySnapshot = await getDocs(query(coralsCollection).limit(imagesPerPage));
+      let queryRef;
+      let remainingImages = totalCount - ((pageNumber - 1) * imagesPerPage);
+      const currentImagesPerPage = remainingImages < imagesPerPage ? remainingImages : imagesPerPage;
+
+      if (currentImagesPerPage <= 0) {
+        console.log("No more images to fetch");
+        return; // No need to fetch if currentImagesPerPage is 0 or less
+      }
+
+      if (pageNumber === 1) {
+        queryRef = query(coralsCollection, orderBy("imageName"), limit(currentImagesPerPage));
+      } else if (lastVisible) {
+        queryRef = query(coralsCollection, orderBy("imageName"), startAfter(lastVisible), limit(currentImagesPerPage));
+      } else {
+        console.error("Error fetching images: No last visible document found.");
+        return;
+      }
+
+      const querySnapshot = await getDocs(queryRef);
 
       let images = [];
+      let lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
 
       querySnapshot.forEach((doc) => {
-        
         const data = doc.data();
-        
+
         let lastEditedBy = data.lastEditedBy || (currentUser ? currentUser.email || "Unknown" : "Unknown");
 
         if (!data.lastEditedBy) {
@@ -411,22 +434,45 @@ const Aquascape = () => {
           ...data,
           description: data.description || "",
           lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
-          lastEditedBy, 
+          lastEditedBy,
         });
       });
 
-      // Sort images by last edited timestamp
-      images.sort((a, b) => b.lastEdited - a.lastEdited);
+      if (images.length > 0) {
+        console.log("Fetched images:", images);
+        setImageList(images);
+        setLastVisibleDocs((prev) => {
+          const newDocs = [...prev];
+          newDocs[pageNumber - 1] = lastVisibleDoc;
+          return newDocs;
+        });
+      } else {
+        console.log("No images fetched");
+      }
 
-      setImageList(images);
     } catch (error) {
       console.error("Error fetching images:", error);
     }
   };
 
   useEffect(() => {
-    fetchImages();
+    const loadData = async () => {
+      await delay(2000); // Add a 2-second delay for loading effect
+      const totalCount = await fetchTotalCount();
+      if (totalCount > 0) {
+        await fetchImages(1, imagesPerPage);
+      }
+      setLoading(false);
+    };
+
+    loadData();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      fetchImages(currentPage, imagesPerPage, lastVisibleDocs[currentPage - 2]);
+    }
+  }, [currentPage, loading]);
 
   useEffect(() => {
     // Listen for auth state changes
@@ -444,20 +490,11 @@ const Aquascape = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("Auth State Changed: ", user);
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
-
   const handleDescriptionChange = (id, newDescription) => {
     setDescriptions((prevDescriptions) => ({
       ...prevDescriptions,
       [id]: newDescription,
     }));
-    // If the updated image is the currently selected one, update the selectedDescription
     if (selectedImage && id === selectedImage.id) {
       setSelectedDescription(newDescription);
     }
@@ -466,26 +503,20 @@ const Aquascape = () => {
   const saveDescription = async (id) => {
     const description = descriptions[id];
     if (!id || !description) {
-      alert(
-        "Cannot save description: No document ID found or description is empty"
-      );
+      alert("Cannot save description: No document ID found or description is empty");
       return;
     }
 
     try {
-      // Use the state for the current user's email, fallback to 'Unknown' if not available
-      const userEmail = currentUser
-        ? currentUser.email || "Unknown"
-        : "Unknown";
+      const userEmail = currentUser ? currentUser.email || "Unknown" : "Unknown";
       const docRef = doc(db, "aquascapes", id);
       await updateDoc(docRef, {
         description,
-        lastEditedBy: userEmail, // Use email instead of displayName
+        lastEditedBy: userEmail,
         lastEdited: new Date(),
       });
       alert("Description saved!");
 
-      // Update the state to reflect the change
       setImageList((prevList) =>
         prevList.map((image) => {
           if (image.id === id) {
@@ -503,6 +534,10 @@ const Aquascape = () => {
       alert("Failed to save description: " + error.message);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="page-main-box">
@@ -527,47 +562,9 @@ const Aquascape = () => {
           onClose={handleDismiss}
         />
       )}
-      {/* <div className="page-inputbox">
-        <div className="page-input-boxes">
-          <input
-            type="text"
-            id="AquascapeTypeInput" // Adding an id attribute
-            name="aquascapeType" // Adding a name attribute
-            className="coral-name-input"
-            placeholder="Aquascape Type..."
-            maxLength="30"
-            value={imageAquascapeType}
-            onChange={handleAquascapeTypeInput}
-          />
-          <textarea
-            id="descriptionInput"
-            name="description"
-            className="description-input"
-            placeholder="Enter image description (max 300 characters)"
-            maxLength="255"
-            rows="4" // Sets the initial visible number of lines
-            onChange={handleDescriptionInput}
-            value={imageDescription}
-          ></textarea>
-        </div>
-        <div className="page-input-box2">
-          <input
-            type="file"
-            id="imageUpload" // Existing id attribute
-            name="imageUpload"
-            className="file-box" // Adding a name attribute
-            value={fileInputValue}
-            onChange={handleFileInputChange}
-          />
-          <button className="page-btn-upload" onClick={uploadImage}>
-            Upload
-          </button>
-        </div>
-      </div> */}
-
       <div className="page-images-list">
-        {currentImages.map((image, index) => (
-          <div key={image.imageName} className="page-image-container">
+        {imageList.map((image, index) => (
+          <div key={image.id} className="page-image-container">
             <img
               src={image.url}
               className="page-img-grid"
@@ -585,7 +582,11 @@ const Aquascape = () => {
 
       <div className="pagination">
         <button
-          onClick={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+          onClick={() => {
+            if (currentPage > 1) {
+              setCurrentPage((prev) => prev - 1);
+            }
+          }}
         >
           Prev
         </button>
@@ -593,15 +594,15 @@ const Aquascape = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() =>
-            setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-          }
+          onClick={() => {
+            if (currentPage < totalPages) {
+              setCurrentPage((prev) => prev + 1);
+            }
+          }}
         >
           Next
         </button>
       </div>
-
-      
     </div>
   );
 };

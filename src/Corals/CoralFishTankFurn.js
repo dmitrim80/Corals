@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { storage, db, auth } from "./Firebase-config";
 import {
   ref,
-  listAll,
-  getDownloadURL,
   uploadBytes,
+  getDownloadURL,
   deleteObject,
 } from "firebase/storage";
 import {
@@ -14,14 +13,18 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  limit,
   query,
   where,
   getDoc,
-  writeBatch,
+  orderBy,
+  startAfter,
+  endBefore,
 } from "firebase/firestore";
 import { v4 } from "uuid";
 
 const FishTankFurn = () => {
+  const [totalCount, setTotalCount] = useState(0);
   const [imageUpload, setImageUpload] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,19 +41,15 @@ const FishTankFurn = () => {
   const [fileInputValue, setFileInputValue] = useState("");
   const [currentImageId, setCurrentImageId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const imagesPerPage = 12; // 12 images per page
-  const indexOfLastImage = currentPage * imagesPerPage;
-  const indexOfFirstImage = indexOfLastImage - imagesPerPage;
-  const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
-  const totalImages = imageList.length;
-  const totalPages = Math.ceil(totalImages / imagesPerPage);
-
-  // create new collection
+  const [imagesPerPage, setImagesPerPage] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+  const [lastVisibleDocs, setLastVisibleDocs] = useState([]);
 
   const handleEdit = () => {
     setModalEdit(true); // Open ModalEdit
     setIsModalOpen(false); // Close ImageModal
   };
+
   const handleDismiss = () => {
     setModalEdit(false); // Close ModalEdit
     setIsModalOpen(true); // Reopen ImageModal
@@ -66,7 +65,7 @@ const FishTankFurn = () => {
 
         setSelectedImage(image.url);
         setSelectedDescription(imageData.description);
-        setSelectedImageAquascapeType(imageData.aquascapeType);
+        setSelectedImageAquascapeType(imageData.coralName);
 
         let lastEditedDate = "";
         if (
@@ -94,6 +93,7 @@ const FishTankFurn = () => {
   const handleDescriptionInput = (event) => {
     setImageDescription(event.target.value);
   };
+
   const handleAquascapeTypeInput = (event) => {
     setImageAquascapeType(event.target.value);
   };
@@ -102,21 +102,20 @@ const FishTankFurn = () => {
     if (!imageUpload) return;
 
     const imageName = v4(); // Random file name
-    const imageRef = ref(storage, `Aquascape Ideas/${imageName}`);
+    const imageRef = ref(storage, `Fish Tank as Furniture/${imageName}`);
     const userEmail = currentUser ? currentUser.email || "Unknown" : "Unknown";
 
     try {
       const snapshot = await uploadBytes(imageRef, imageUpload);
       const url = await getDownloadURL(snapshot.ref);
 
-      // Initialize fields when creating a new document
       const newDocRef = await addDoc(collection(db, "fishtankfurniture"), {
         url,
         imageName,
         description: imageDescription,
-        aquascapeType: imageAquascapeType,
-        lastEdited: new Date(), // Use current date
-        lastEditedBy: userEmail, // Use current user or 'Unknown'
+        coralName: imageAquascapeType,
+        lastEdited: new Date(),
+        lastEditedBy: userEmail,
       });
 
       setImageList((prevList) => [
@@ -125,13 +124,12 @@ const FishTankFurn = () => {
           url,
           imageName,
           description: imageDescription,
-          aquascapeType: imageAquascapeType,
+          coralName: imageAquascapeType,
           lastEdited: new Date(),
           lastEditedBy: userEmail,
         },
         ...prevList,
       ]);
-      // Reset the description input after upload
 
       setImageDescription("");
       setImageAquascapeType("");
@@ -176,9 +174,8 @@ const FishTankFurn = () => {
 
   const deleteImage = async (imageId, imageName, isOrphan) => {
     console.log("Attempting to delete image with Name:", imageName);
-    // Ensure the image name does not contain 'Aquascape Ideas/' prefix
-    if (imageName.startsWith("Aquascape Ideas/")) {
-      imageName = imageName.replace("Aquascape Ideas/", "");
+    if (imageName.startsWith("Fish Tank as Furniture/")) {
+      imageName = imageName.replace("Fish Tank as Furniture/", "");
     }
 
     const isConfirmed = window.confirm(
@@ -186,7 +183,7 @@ const FishTankFurn = () => {
     );
     if (isConfirmed) {
       try {
-        const imageRef = ref(storage, `Aquascape Ideas/${imageName}`);
+        const imageRef = ref(storage, `Fish Tank as Furniture/${imageName}`);
         await deleteObject(imageRef);
 
         if (!isOrphan) {
@@ -224,14 +221,13 @@ const FishTankFurn = () => {
       const docRef = doc(db, "fishtankfurniture", imageId);
       await updateDoc(docRef, {
         description: description,
-        aquascapeType: aquascapeType,
+        coralName: aquascapeType,
         lastEdited: new Date(),
         lastEditedBy: userEmail,
       });
 
       alert("Changes saved successfully!");
 
-      // Update the image list state
       setImageList((prevList) =>
         prevList.map((image) => {
           if (image.id === imageId) {
@@ -246,6 +242,7 @@ const FishTankFurn = () => {
           return image;
         })
       );
+
       try {
         const docRef = doc(db, "fishtankfurniture", imageId);
         const docSnapshot = await getDoc(docRef);
@@ -253,7 +250,6 @@ const FishTankFurn = () => {
           const imageData = docSnapshot.data();
           setSelectedDescription(imageData.description);
           setSelectedImageAquascapeType(imageData.aquascapeType);
-          // Update last edited info if needed
         } else {
           console.log("Document not found after update.");
         }
@@ -290,7 +286,7 @@ const FishTankFurn = () => {
               <tr>
                 <td className="coral-name-cell">
                   <div className="coral-name-label">
-                    <b>Placement Type:</b>
+                    <b>Aquascape Type:</b>
                   </div>
                   <div className="coral-name-value">{imageAquascapeType}</div>
                 </td>
@@ -300,8 +296,12 @@ const FishTankFurn = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button className="modal-button" onClick={onEdit}>Edit</button>
-                  <button className="modal-button" onClick={onClose}>Close</button>
+                  <button className="modal-button" onClick={onEdit}>
+                    Edit
+                  </button>
+                  <button className="modal-button" onClick={onClose}>
+                    Close
+                  </button>
                 </td>
               </tr>
               <tr>
@@ -358,7 +358,7 @@ const FishTankFurn = () => {
               <tr>
                 <td className="coral-name-cell">
                   <p>
-                    <b>Placement Type:</b>
+                    <b>Aquascape Type:</b>
                   </p>
                   <input
                     type="text"
@@ -373,8 +373,12 @@ const FishTankFurn = () => {
                   Edited by: {lastEdited.editedBy}
                 </td>
                 <td className="modal-buttons-cell">
-                  <button className="modal-button" onClick={handleSave}>Save</button>
-                  <button className="modal-button" onClick={onClose}>Dismiss</button>
+                  <button className="modal-button" onClick={handleSave}>
+                    Save
+                  </button>
+                  <button className="modal-button" onClick={onClose}>
+                    Dismiss
+                  </button>
                 </td>
               </tr>
               <tr>
@@ -393,44 +397,115 @@ const FishTankFurn = () => {
     );
   };
 
-      const fetchImages = async () => {
-        try {
-          const coralsCollection = collection(db, "fishtankfurniture");
-          const querySnapshot = await getDocs(query(coralsCollection).limit(imagesPerPage));
-    
-          let images = [];
-    
-          querySnapshot.forEach((doc) => {
-            
-            const data = doc.data();
-            
-            let lastEditedBy = data.lastEditedBy || (currentUser ? currentUser.email || "Unknown" : "Unknown");
-    
-            if (!data.lastEditedBy) {
-              updateDoc(doc.ref, { lastEditedBy });
-            }
-    
-            images.push({
-              id: doc.id,
-              ...data,
-              description: data.description || "",
-              lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
-              lastEditedBy, 
-            });
-          });
-    
-          // Sort images by last edited timestamp
-          images.sort((a, b) => b.lastEdited - a.lastEdited);
-    
-          setImageList(images);
-        } catch (error) {
-          console.error("Error fetching images:", error);
+  const fetchTotalCount = async () => {
+    try {
+      const totalCountDoc = await getDoc(
+        doc(db, "collection_count", "fishtankfurniture")
+      );
+      if (totalCountDoc.exists()) {
+        const totalCount = totalCountDoc.data().count;
+        console.log("Total count:", totalCount);
+        setTotalCount(totalCount);
+        setTotalPages(Math.ceil(totalCount / imagesPerPage)); // Calculate total pages
+        return totalCount;
+      } else {
+        console.log("Total count document does not exist.");
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error fetching total count:", error);
+      return 0;
+    }
+  };
+
+  const fetchImages = async (pageNumber, imagesPerPage, lastVisible = null) => {
+    console.log("Current Page Number:", pageNumber);
+    console.log("Current imagesPerPage:", imagesPerPage);
+
+    try {
+      const coralsCollection = collection(db, "fishtankfurniture");
+      let queryRef;
+      let remainingImages = totalCount - (pageNumber - 1) * imagesPerPage;
+      const currentImagesPerPage =
+        remainingImages < imagesPerPage ? remainingImages : imagesPerPage;
+
+      if (currentImagesPerPage <= 0) {
+        return; // No need to fetch if currentImagesPerPage is 0 or less
+      }
+
+      if (pageNumber === 1) {
+        queryRef = query(
+          coralsCollection,
+          orderBy("imageName"),
+          limit(currentImagesPerPage)
+        );
+      } else if (lastVisible) {
+        queryRef = query(
+          coralsCollection,
+          orderBy("imageName"),
+          startAfter(lastVisible),
+          limit(currentImagesPerPage)
+        );
+      } else {
+        console.error("Error fetching images: No last visible document found.");
+        return;
+      }
+
+      const querySnapshot = await getDocs(queryRef);
+
+      let images = [];
+      let lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+
+        let lastEditedBy =
+          data.lastEditedBy ||
+          (currentUser ? currentUser.email || "Unknown" : "Unknown");
+
+        if (!data.lastEditedBy) {
+          updateDoc(doc.ref, { lastEditedBy });
         }
-      };
+
+        images.push({
+          id: doc.id,
+          ...data,
+          description: data.description || "",
+          lastEdited: data.lastEdited ? data.lastEdited.toDate() : new Date(),
+          lastEditedBy,
+        });
+      });
+
+      if (images.length > 0) {
+        console.log("Fetched images:", images);
+        setImageList(images);
+        setLastVisibleDocs((prev) => {
+          const newDocs = [...prev];
+          newDocs[pageNumber - 1] = lastVisibleDoc;
+          return newDocs;
+        });
+      } else {
+        console.log("No images fetched");
+      }
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
+  };
 
   useEffect(() => {
-    fetchImages();
+    const loadData = async () => {
+      await fetchTotalCount();
+      await fetchImages(1, imagesPerPage);
+    };
+
+    loadData();
   }, []);
+
+  useEffect(() => {
+    if (currentPage !== 1) {
+      fetchImages(currentPage, imagesPerPage, lastVisibleDocs[currentPage - 2]);
+    }
+  }, [currentPage]);
 
   useEffect(() => {
     // Listen for auth state changes
@@ -448,20 +523,11 @@ const FishTankFurn = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("Auth State Changed: ", user);
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
-
   const handleDescriptionChange = (id, newDescription) => {
     setDescriptions((prevDescriptions) => ({
       ...prevDescriptions,
       [id]: newDescription,
     }));
-    // If the updated image is the currently selected one, update the selectedDescription
     if (selectedImage && id === selectedImage.id) {
       setSelectedDescription(newDescription);
     }
@@ -477,19 +543,17 @@ const FishTankFurn = () => {
     }
 
     try {
-      // Use the state for the current user's email, fallback to 'Unknown' if not available
       const userEmail = currentUser
         ? currentUser.email || "Unknown"
         : "Unknown";
-      const docRef = doc(db, "fishtankfurniture", id);
+      const docRef = doc(db, "aquascapes", id);
       await updateDoc(docRef, {
         description,
-        lastEditedBy: userEmail, // Use email instead of displayName
+        lastEditedBy: userEmail,
         lastEdited: new Date(),
       });
       alert("Description saved!");
 
-      // Update the state to reflect the change
       setImageList((prevList) =>
         prevList.map((image) => {
           if (image.id === id) {
@@ -531,46 +595,8 @@ const FishTankFurn = () => {
           onClose={handleDismiss}
         />
       )}
-      {/* <div className="page-inputbox">
-        <div className="page-input-boxes">
-          <input
-            type="text"
-            id="AquascapeTypeInput" // Adding an id attribute
-            name="aquascapeType" // Adding a name attribute
-            className="coral-name-input"
-            placeholder="Aquascape Type..."
-            maxLength="30"
-            value={imageAquascapeType}
-            onChange={handleAquascapeTypeInput}
-          />
-          <textarea
-            id="descriptionInput"
-            name="description"
-            className="description-input"
-            placeholder="Enter image description (max 300 characters)"
-            maxLength="255"
-            rows="4" // Sets the initial visible number of lines
-            onChange={handleDescriptionInput}
-            value={imageDescription}
-          ></textarea>
-        </div>
-        <div className="page-input-box2">
-          <input
-            type="file"
-            id="imageUpload" // Existing id attribute
-            name="imageUpload"
-            className="file-box" // Adding a name attribute
-            value={fileInputValue}
-            onChange={handleFileInputChange}
-          />
-          <button className="page-btn-upload" onClick={uploadImage}>
-            Upload
-          </button>
-        </div>
-      </div> */}
-
       <div className="page-images-list">
-        {currentImages.map((image, index) => (
+        {imageList.map((image, index) => (
           <div key={image.imageName} className="page-image-container">
             <img
               src={image.url}
@@ -589,7 +615,16 @@ const FishTankFurn = () => {
 
       <div className="pagination">
         <button
-          onClick={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+          onClick={() => {
+            if (currentPage > 1) {
+              setCurrentPage((prev) => prev - 1);
+              fetchImages(
+                currentPage - 1,
+                imagesPerPage,
+                lastVisibleDocs[currentPage - 3]
+              );
+            }
+          }}
         >
           Prev
         </button>
@@ -597,15 +632,20 @@ const FishTankFurn = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() =>
-            setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-          }
+          onClick={() => {
+            if (currentPage < totalPages) {
+              setCurrentPage((prev) => prev + 1);
+              fetchImages(
+                currentPage + 1,
+                imagesPerPage,
+                lastVisibleDocs[currentPage - 1]
+              );
+            }
+          }}
         >
           Next
         </button>
       </div>
-
-      
     </div>
   );
 };

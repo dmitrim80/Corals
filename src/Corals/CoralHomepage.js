@@ -40,7 +40,7 @@ const CoralHomepage = ({ darkMode }) => {
   const navigate = useNavigate();
 
   const handleImageClick = (route) => {
-    navigate(`/corals/${route}`); 
+    navigate(`/corals/${route}`);
   };
 
   const [visibleImages, setVisibleImages] = useState([]);
@@ -51,7 +51,7 @@ const CoralHomepage = ({ darkMode }) => {
   }, []);
 
   const loadMoreImages = async () => {
-    const acroporaRef = ref(storage, "Acropora"); 
+    const acroporaRef = ref(storage, "Acropora");
     try {
       const result = await listAll(acroporaRef, {
         maxResults: 5,
@@ -105,9 +105,9 @@ const CoralHomepage = ({ darkMode }) => {
 
   return (
     <>
-      <div className="coral-homepage-imagescroll-container">
+      {/* <div className="coral-homepage-imagescroll-container">
         <ImageScroll />
-      </div>
+      </div> */}
 
       <div className={pageClass}>
         <div className={pageClass2}>

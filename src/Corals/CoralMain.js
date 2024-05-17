@@ -42,7 +42,6 @@ const Coral_Main = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth state changed: ", currentUser);
       setUser(currentUser);
       setLoading(false);
     });
@@ -54,7 +53,7 @@ const Coral_Main = () => {
       // Directly consider only the first segment after `/corals/` as valid.
       const pathSegment = location.pathname.split("/").pop();
 
-      console.log("Current Path Segment:", pathSegment);
+    
 
       const allowedPathsAuthenticated = [
         "homepage",
@@ -90,10 +89,10 @@ const Coral_Main = () => {
       ];
 
       if (!user && !allowedPathsUnauthenticated.includes(pathSegment)) {
-        console.log("Unauthorized access - redirecting to index");
+        
         navigate("/corals/index", { replace: true });
       } else if (user && !allowedPathsAuthenticated.includes(pathSegment)) {
-        console.log("Authorized but wrong path - redirecting to homepage");
+        
         navigate("/corals/homepage", { replace: true });
       }
     }
